@@ -1,0 +1,30 @@
+{
+  "name": "all_horizons",
+  "version": "0.0.0",
+  "description": "a tumblrbot at generates and posts gifs based on a processing js script",
+  "main": "generate_horizon_gif.js",
+  "dependencies": {
+    "tumblrwks": "~0.2.0",
+    "node-static": "~0.7.2",
+    "phantom": "~0.5.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/whichlight/all-horizons-auto-tumblr-gifs.git"
+  },
+  "keywords": [
+    "bot",
+    "gif",
+    "processing",
+    "tumblr"
+  ],
+  "author": "whichlight",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/whichlight/all-horizons-auto-tumblr-gifs/issues"
+  }
+}
