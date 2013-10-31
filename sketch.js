@@ -1,7 +1,18 @@
+var ws = new BinaryClient('ws://localhost:8081');
 
-var draw, setup;
+var setup;
+var draw;
+
+ws.on('error', function(err){
+    console.log("error : " +err);
+})
+
+ws.on('open', function(){
+  console.log('connected');
+});
 
 $("document").ready(function(){
+
   var frames = [];
   var saveFrames = false;
   var time=0;
@@ -35,7 +46,9 @@ $("document").ready(function(){
         lights.splice(i,1);
         if(saveFrames==true){
           saveFrames=false;
-          console.log(frames.join("\t"));
+          //done
+          if(saved){
+          }
         }
         if(!saved){
           saveFrames=true;
@@ -46,7 +59,12 @@ $("document").ready(function(){
 
     if (saveFrames) {
       var img =  document.getElementsByTagName("canvas")[0].toDataURL();
-      frames.push(img);
+      var png = img.split(',')[1];
+      console.log("image saving: " + time);
+      var stream = ws.createStream({"size": RATE_BIRTH});
+      stream.write(png);
+      stream.end();
+      stream.destroy();
     }
     time++;
 
@@ -68,3 +86,12 @@ $("document").ready(function(){
     rect(0, height/2-this.y, width, 2*this.y);
   }
 });
+
+function str2ab(str) {
+       var buf = new ArrayBuffer(str.length); // 2 bytes for each char
+       var bufView = new Uint8Array(buf);
+       for (var i=0, strLen=str.length; i<strLen; i++) {
+         bufView[i] = str.charCodeAt(i);
+       }
+       return buf;
+     }

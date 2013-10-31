@@ -3,6 +3,8 @@ var phantom = require('phantom'),
   exec= require('child_process').exec,
   Tumblr = require('tumblrwks'),
   server = require('node-static'),
+  BinaryServer = require('binaryjs').BinaryServer,
+  atob = require('atob'),
   config = require('./config.js');
 
 var tumblr = new Tumblr({
@@ -18,37 +20,21 @@ var generating;
 
 var fileServer = new server.Server();
 
-require('http').createServer(function (request, response) {
+var app = require('http').createServer(function (request, response) {
   request.addListener('end', function () {
     fileServer.serve(request, response);
   }).resume();
 }).listen(8081);
 
+var wss = BinaryServer({server: app});
 
+function run_ph(){
 phantom.create(function(ph){
   ph.createPage(function(page){
     page.set('onConsoleMessage', function (msg) {
-        clearInterval(generating);
-        ph.exit();
-        var frames = msg.split("\t");
-        console.log(frames.length)
-        var processed = 0;
-        frames.pop(); //lose one of the ends, it repeats
-        for(image in frames){
-            var base64Data = frames[image].replace(/^data:image\/png;base64,/,"");
-            fs.writeFile("tmp_img/"+image+"_out.png",
-              new Buffer(base64Data, 'base64'),
-              function(err){
-                if (err) throw err;
-                processed++;
-                if(processed === frames.length){
-                  console.log("finished making images");
-                  makeGif();
-                }
-            });
-        }
+     console.log(msg);
     });
-    page.open('http://127.0.0.1:8081', function (status) {
+    page.open('http://localhost:8081', function (status) {
        console.log("status: "+status);
        console.log('open page');
         var start = Date.now();
@@ -56,8 +42,32 @@ phantom.create(function(ph){
             t = Date.now()-start;
             console.log("generating... " + Math.floor(t/1000) + " seconds");
         },1000);
-
       });
+  });
+});
+}
+
+//run_ph();
+
+wss.on('connection', function(ws) {
+  console.log("connection made");
+  var image = 0;
+  ws.on('stream', function(stream, meta) {
+    console.log('image : ' + image );
+    var writeStream = fs.createWriteStream("tmp_img/"+image+"_out.png");
+    stream.on("data", function(data){
+      writeStream.write(new Buffer(data, 'base64'));
+    });
+    stream.on("end", function(){
+      image++;
+    });
+    if (meta.size === image){
+      console.log('done generating images');
+      //makeGif();
+    }
+  });
+  ws.on('error', function(err){
+    console.log("server err: " + err);
   });
 });
 
@@ -69,7 +79,7 @@ function makeGif(){
         var removetmp = exec('rm tmp_img/*out.png', function(err, stdout, stderr){
             if(err) throw err;
             console.log('gif animation complete');
-            postGif(filename);
+          //  postGif(filename);
         });
     });
     console.log(id);
