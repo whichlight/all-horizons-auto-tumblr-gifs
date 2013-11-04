@@ -1,15 +1,5 @@
-var ws = new BinaryClient('ws://localhost:8081');
-
 var setup;
 var draw;
-
-ws.on('error', function(err){
-    console.log("error : " +err);
-})
-
-ws.on('open', function(){
-  console.log('connected');
-});
 
 $("document").ready(function(){
 
@@ -50,7 +40,7 @@ $("document").ready(function(){
           //done
           if(saved){
           }
-        }
+
         if(!saved){
           saveFrames=true;
           saved = true;
@@ -62,13 +52,17 @@ $("document").ready(function(){
       var img =  document.getElementsByTagName("canvas")[0].toDataURL();
       var png = img.split(',')[1];
       console.log("image saving: " + time);
-      var stream = ws.createStream({"size": RATE_BIRTH});
-      stream.write(png);
-      stream.end();
-      stream.destroy();
+      uploadImage(png);
     }
     time++;
 
+  }
+
+  function uploadImage(data){
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/', true);
+      xhr.setRequestHeader("Content-Type", 'image/png')
+      xhr.send(data);
   }
 
   function LightBar() {
@@ -87,12 +81,3 @@ $("document").ready(function(){
     rect(0, height/2-this.y, width, 2*this.y);
   }
 });
-
-function str2ab(str) {
-       var buf = new ArrayBuffer(str.length); // 2 bytes for each char
-       var bufView = new Uint8Array(buf);
-       for (var i=0, strLen=str.length; i<strLen; i++) {
-         bufView[i] = str.charCodeAt(i);
-       }
-       return buf;
-     }
