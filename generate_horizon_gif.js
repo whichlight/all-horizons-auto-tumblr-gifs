@@ -1,3 +1,4 @@
+#! /usr/local/bin/node
 var phantom = require('phantom'),
   fs = require('fs'),
   exec= require('child_process').exec,
@@ -14,10 +15,9 @@ var tumblr = new Tumblr({
     }, config.key.blog);
 
 
-
 var generating;
 
-var fileServer = new server.Server();
+var fileServer = new server.Server(__dirname);
 
 var image=0;
 var img_size;
@@ -37,7 +37,7 @@ var app = require('http').createServer(function (req, res) {
       req.on('end', function () {
           console.log('done: '+image);
           body = body.replace("/^data:image\/png;base64,/", "");
-          require("fs").writeFile("tmp_img/"+image+"_out.png", body, 'base64', function(err) {
+          require("fs").writeFile(__dirname+"/tmp_img/"+image+"_out.png", body, 'base64', function(err) {
              if(err) throw err;
              if(img_size==image){
                 console.log("finished making images");
@@ -71,10 +71,10 @@ run_ph();
 
 function makeGif(){
     var id = new Date().getTime();
-    var filename = 'gifs/' + id +"_anim.gif";
-    var child = exec('./make_gifs.sh '+filename, function(err, stdout, stderr){
+    var filename = __dirname+'/gifs/' + id +"_anim.gif";
+    var child = exec('bash '+__dirname+'/make_gifs.sh '+filename, function(err, stdout, stderr){
         if(err) throw err;
-        var removetmp = exec('rm tmp_img/*out.png', function(err, stdout, stderr){
+        var removetmp = exec('rm '+__dirname+'/tmp_img/*out.png', function(err, stdout, stderr){
             if(err) throw err;
             console.log('gif animation complete');
             postGif(filename);
