@@ -3,6 +3,7 @@ var phantom = require('phantom'),
   exec= require('child_process').exec,
   Tumblr = require('tumblrwks'),
   server = require('node-static'),
+  url = require('url'),
   config = require('./config.js');
 
 var tumblr = new Tumblr({
@@ -19,10 +20,16 @@ var generating;
 var fileServer = new server.Server();
 
 var image=0;
+var img_size;
 var app = require('http').createServer(function (req, res) {
   req.addListener('end', function () {
     fileServer.serve(req, res);
   }).resume();
+  if (req.method == 'GET'){
+     queryData = url.parse(req.url, true).query;
+     img_size = queryData.num;
+     console.log("GET req: " + img_size);
+  }
   if (req.method == 'POST') {
       console.log("POST");
       var body = '';
@@ -31,9 +38,14 @@ var app = require('http').createServer(function (req, res) {
       });
       req.on('end', function () {
           console.log('done: '+image);
+          body = body.replace("/^data:image\/png;base64,/", "");
           console.log(body.slice(0,20));
           require("fs").writeFile("tmp_img/"+image+"_out.png", body, 'base64', function(err) {
              if(err) throw err;
+             if(img_size==image){
+                console.log("DONE: " + image);
+                makeGif();
+             }
            });
            image++;
       });
@@ -54,12 +66,7 @@ function run_ph(){
       page.open('http://localhost:8081', function (status) {
         console.log("status: "+status);
         console.log('open page');
-        var start = Date.now();
-        generating = setInterval(function(){
-          t = Date.now()-start;
-          console.log("generating... " + Math.floor(t/1000) + " seconds");
-        },1000);
-        });
+       });
     });
   });
 }

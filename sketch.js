@@ -14,6 +14,9 @@ $("document").ready(function(){
   var front = random(1);
   var back = random(1);
   var saved = false;
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/?num='+RATE_BIRTH, true);
+            xhr.send();
 
   setup = function(){
     createGraphics(600,600);
@@ -35,15 +38,21 @@ $("document").ready(function(){
       lights[i].update();
       if(lights[i].y>height/DURATION+20){
         lights.splice(i,1);
+
+
         if(saveFrames==true){
           saveFrames=false;
           //done
           if(saved){
-          }
 
+
+          }
+        }
         if(!saved){
-          saveFrames=true;
-          saved = true;
+
+
+            saveFrames=true;
+            saved = true;
         }
       }
     }
