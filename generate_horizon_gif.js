@@ -34,7 +34,7 @@ phantom.create(function(ph){
         console.log(frames.length)
         var processed = 0;
         frames.pop(); //lose one of the ends, it repeats
-        for(image in frames){
+        for(image in frames){ 
             var base64Data = frames[image].replace(/^data:image\/png;base64,/,"");
             fs.writeFile("tmp_img/"+image+"_out.png",
               new Buffer(base64Data, 'base64'),
