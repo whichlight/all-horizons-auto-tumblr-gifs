@@ -5,7 +5,6 @@ var phantom = require('phantom'),
   server = require('node-static'),
   BinaryServer = require('binaryjs').BinaryServer,
   atob = require('atob'),
-  Browser = require('zombie'),
   config = require('./config.js');
 
 var tumblr = new Tumblr({
@@ -48,24 +47,8 @@ function run_ph(){
   });
 }
 
-function run_zombie(){
-  browser = new Browser();
-  browser.visit("http://localhost:8081/", { debug: true}, function () {
-    console.log('open page');
-    var start = Date.now();
-    var generating = setInterval(function(){
-      t = Date.now()-start;
-      console.log("generating... " + Math.floor(t/1000) + " seconds");
-    },1000);
-  });
-  browser.on("error", function(error) {
-    console.error(error);
-  })
-
-}
 
 run_ph();
-//run_zombie();
 
 wss.on('connection', function(ws) {
   console.log("connection made");
