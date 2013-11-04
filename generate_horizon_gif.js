@@ -28,10 +28,8 @@ var app = require('http').createServer(function (req, res) {
   if (req.method == 'GET'){
      queryData = url.parse(req.url, true).query;
      img_size = queryData.num;
-     console.log("GET req: " + img_size);
   }
   if (req.method == 'POST') {
-      console.log("POST");
       var body = '';
       req.on('data', function (data) {
           body+=data;
@@ -39,11 +37,10 @@ var app = require('http').createServer(function (req, res) {
       req.on('end', function () {
           console.log('done: '+image);
           body = body.replace("/^data:image\/png;base64,/", "");
-          console.log(body.slice(0,20));
           require("fs").writeFile("tmp_img/"+image+"_out.png", body, 'base64', function(err) {
              if(err) throw err;
              if(img_size==image){
-                console.log("DONE: " + image);
+                console.log("finished making images");
                 makeGif();
              }
            });
@@ -82,7 +79,7 @@ function makeGif(){
         var removetmp = exec('rm tmp_img/*out.png', function(err, stdout, stderr){
             if(err) throw err;
             console.log('gif animation complete');
-          //  postGif(filename);
+            postGif(filename);
         });
     });
     console.log(id);
