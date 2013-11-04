@@ -104,11 +104,13 @@ function postGif(filename){
       console.log(json, err);
       if (err) throw err;
       console.log("posted on tumblr");
+      /*
       var removegif = exec('rm '+filename, function(err, stdout, stderr){
         if (err) throw err;
         console.log('deleted gif from hd');
-        process.exit();
       });
+     */
+      process.exit();
     });
   });
 }
