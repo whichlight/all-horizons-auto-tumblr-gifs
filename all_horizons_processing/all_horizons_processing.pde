@@ -39,6 +39,9 @@ void draw() {
       lights.remove(box);
       if(saveFrames==true){
         saveFrames=false;
+        if(saved){
+         exit(); 
+        }
       }
       if(!saved){
         saveFrames=true;

@@ -28,6 +28,7 @@ $("document").ready(function(){
   setup = function(){
     createGraphics(600,600);
     colorMode("hsb");//all 0 to 1
+    console.log('setup done');
   }
 
   draw = function() {
