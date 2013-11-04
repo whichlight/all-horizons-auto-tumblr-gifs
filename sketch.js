@@ -1,7 +1,8 @@
-
-var draw, setup;
+var setup;
+var draw;
 
 $("document").ready(function(){
+
   var frames = [];
   var saveFrames = false;
   var time=0;
@@ -13,10 +14,14 @@ $("document").ready(function(){
   var front = random(1);
   var back = random(1);
   var saved = false;
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/?num='+RATE_BIRTH, true);
+            xhr.send();
 
   setup = function(){
     createGraphics(600,600);
     colorMode("hsb");//all 0 to 1
+    console.log('setup done');
   }
 
   draw = function() {
@@ -33,23 +38,40 @@ $("document").ready(function(){
       lights[i].update();
       if(lights[i].y>height/DURATION+20){
         lights.splice(i,1);
+
+
         if(saveFrames==true){
           saveFrames=false;
-          console.log(frames.join("\t"));
+          //done
+          if(saved){
+
+
+          }
         }
         if(!saved){
-          saveFrames=true;
-          saved = true;
+
+
+            saveFrames=true;
+            saved = true;
         }
       }
     }
 
     if (saveFrames) {
       var img =  document.getElementsByTagName("canvas")[0].toDataURL();
-      frames.push(img);
+      var png = img.split(',')[1];
+      console.log("image saving: " + time);
+      uploadImage(png);
     }
     time++;
 
+  }
+
+  function uploadImage(data){
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/', true);
+      xhr.setRequestHeader("Content-Type", 'image/png')
+      xhr.send(data);
   }
 
   function LightBar() {
