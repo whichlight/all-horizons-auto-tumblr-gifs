@@ -60,8 +60,8 @@ $("document").ready(function(){
     if (saveFrames) {
       var img =  document.getElementsByTagName("canvas")[0].toDataURL();
       var png = img.split(',')[1];
-      console.log("image saving: " + time);
-      uploadImage(png);
+     // console.log("image saving: " + time);
+     // uploadImage(png);
     }
     time++;
 
