@@ -1,4 +1,4 @@
-#! /usr/local/bin/node
+#! /usr/bin/node
 var phantom = require('phantom'),
   fs = require('fs'),
   exec= require('child_process').exec,
@@ -51,7 +51,6 @@ var app = require('http').createServer(function (req, res) {
   }
 }).listen(8081);
 
-
 function run_ph(){
   phantom.create(function(ph){
     ph.createPage(function(page){
@@ -67,6 +66,8 @@ function run_ph(){
 }
 
 
+error = fs.createWriteStream( __dirname + '/log/node.error.log', { flags: 'a' });
+process.stderr.pipe(error);
 run_ph();
 
 function makeGif(){
@@ -104,12 +105,10 @@ function postGif(filename){
       console.log(json, err);
       if (err) throw err;
       console.log("posted on tumblr");
-      /*
       var removegif = exec('rm '+filename, function(err, stdout, stderr){
         if (err) throw err;
         console.log('deleted gif from hd');
       });
-     */
       process.exit();
     });
   });
