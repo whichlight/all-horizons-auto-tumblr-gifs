@@ -38,7 +38,7 @@ var app = require('http').createServer(function (req, res) {
           console.log('done: '+image);
           body = body.replace("/^data:image\/png;base64,/", "");
           require("fs").writeFile(__dirname+"/tmp_img/"+image+"_out.png", body, 'base64', function(err) {
-             if(err) throw err;
+             if(err) console.error(err);
              if(img_size==image){
                 console.log("finished making images");
                 makeGif();
@@ -74,9 +74,9 @@ function makeGif(){
     var id = new Date().getTime();
     var filename = __dirname+'/gifs/' + id +"_anim.gif";
     var child = exec('bash '+__dirname+'/make_gifs.sh '+filename, function(err, stdout, stderr){
-        if(err) throw err;
+        if(err) console.error(err);
         var removetmp = exec('rm '+__dirname+'/tmp_img/*out.png', function(err, stdout, stderr){
-            if(err) throw err;
+            if(err) console.error(err);
             console.log('gif animation complete');
             postGif(filename);
         });
@@ -90,7 +90,7 @@ function getRandomElement(arr){
 
 function postGif(filename){
   var photo = fs.readFile(filename, function(err,photo){
-    if (err) throw err;
+    if (err) console.error(err);
 
     //tags
     var tag_choices= ['lines', 'minimal', 'processing', 'colors',
@@ -103,10 +103,10 @@ function postGif(filename){
       tags: 'gif, '+ random_tag
     }, function(err, json){
       console.log(json, err);
-      if (err) throw err;
+      if (err) console.error(err);
       console.log("posted on tumblr");
       var removegif = exec('rm '+filename, function(err, stdout, stderr){
-        if (err) throw err;
+        if (err) console.error(err);
         console.log('deleted gif from hd');
       });
       process.exit();
