@@ -12,13 +12,20 @@ $("document").ready(function(){
   var RATE_BIRTH = Math.floor(random(5,20)); //from 5 to 25
 
   var front = random(1);
-  var back = random(1);
   var fsat = random(1);
+  var fbright = random(1);
+
+
+  var back = random(1);
   var bsat = random(1);
+  var bbright= random(1);
+
+
+
   var saved = false;
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', '/?num='+RATE_BIRTH, true);
-            xhr.send();
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/?num='+RATE_BIRTH, true);
+  xhr.send();
 
   setup = function(){
     createGraphics(600,600);
@@ -28,7 +35,7 @@ $("document").ready(function(){
 
   draw = function() {
     noStroke();
-    fill(back,bsat,1);
+    fill(back,bsat,bbright);
     rect(0, 0, width, height);
 
     if(time%RATE_BIRTH==0){
@@ -88,7 +95,7 @@ $("document").ready(function(){
     noStroke();
     var alpha =255*(1-Math.pow(((DURATION*this.y)/height),DECAY));
     if(alpha<1){alpha=1;}
-    fill(front,fsat,1, alpha);
+    fill(front,fsat,fbright, alpha);
     rect(0, height/2-this.y, width, 2*this.y);
   }
 });
